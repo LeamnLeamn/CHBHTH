@@ -1,0 +1,109 @@
+﻿@model IEnumerable<CHBHTH.Models.ThongKes>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<br />
+
+@*<center><h2 style="color:red">Top 5 khách hàng mua hàng nhiều nhất</h2></center>
+    <br />
+
+    <table class="table table-bordered">
+        <tr>
+            <th>
+                Tên khách hàng
+            </th>
+            <th>
+                Số điện thoại
+            </th>
+            <th>
+                Tổng tiền đã mua
+            </th>
+            <th>
+                Số lượng đơn hàng
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tennguoidung)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Dienthoai)
+                </td>
+                <td>
+                    @String.Format("{0:0,0}", item.Tongtien) VNĐ
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Soluong)
+                </td>
+            </tr>
+        }
+
+    </table>*@
+
+<div class="chart-container" style="width: 75%; margin: auto;">
+    <canvas id="customerChart"></canvas>
+</div>
+
+<script>
+    // Extract data from the Razor model
+    var labels = [];
+    var totalAmounts = [];
+    var orderCounts = [];
+
+    @foreach (var item in Model)
+    {
+        <text>
+            labels.push('@item.Tennguoidung'); // Customer names
+            totalAmounts.push(@item.Tongtien); // Total amount spent
+            orderCounts.push(@item.Soluong);   // Number of orders
+        </text>
+    }
+
+    // Chart.js configuration
+    const ctx = document.getElementById('customerChart').getContext('2d');
+    const customerChart = new Chart(ctx, {
+        type: 'bar', // Chart type can be changed to 'line', 'pie', etc.
+        data: {
+            labels: labels, // X-axis labels
+            datasets: [
+                {
+                    label: 'Total Amount Spent (VNĐ)',
+                    data: totalAmounts,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Number of Orders',
+                    data: orderCounts,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Monthly Customer Purchase Report'
+                }
+            }
+        }
+    });
+</script>
